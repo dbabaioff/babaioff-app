@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>YouTube Audio Player</title>
+<style>
+  body {
+    font-family: sans-serif;
+    max-width: 600px;
+    margin: 40px auto;
+    text-align: center;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    margin: 8px 0;
+    padding: 10px;
+    background: #f2f2f2;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  li:hover {
+    background: #e0e0e0;
+  }
+  li.active {
+    background: #cce5ff;
+  }
+  /* Hide video but keep audio */
+  #player {
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+  }
+</style>
+</head>
+<body>
+
+<h2>🎧 YouTube Audio Player</h2>
+<ul id="videoList">
+  <li data-id="wOV6YBnjRNE">צמאה (באבוב) || ישיבת מקור חיים</li>
+  <li data-id="dPR6v_cywuU">להקת אהללה - מחרוזת שירי שבת -ניגון מזמור לדוד | שבענו מטובך | כי אשמרה שבת | הוא אלוקינו | בר יוחאי</li>
+  <li data-id="lRWgH1CKHmM">להקת אשירה || ועל הכל :: הפעם אודה :: יוסף הצדיק</li>
+</ul>
+
+<!-- YouTube player (hidden) -->
+<div id="player"></div>
+
+<script>
+  let tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.body.appendChild(tag);
+
+  let player;
+  let currentVideoId = null;
+  let isPlaying = false;
+
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      height: '1',
+      width: '1',
+      videoId: '',
+      playerVars: {
+        autoplay: 0,
+        controls: 0,
+        modestbranding: 1
+      },
+      events: {
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  }
+
+  function onPlayerStateChange(event) {
+    if (event.data === YT.PlayerState.PLAYING) {
+      isPlaying = true;
+    } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+      isPlaying = false;
+    }
+  }
+
+  document.getElementById('videoList').addEventListener('click', function(e) {
+    const li = e.target.closest('li');
+    if (!li) return;
+    const videoId = li.dataset.id;
+
+    // Remove highlight from all
+    document.querySelectorAll('#videoList li').forEach(el => el.classList.remove('active'));
+
+    // Toggle logic
+    if (videoId === currentVideoId) {
+      if (isPlaying) {
+        player.pauseVideo();
+        li.classList.remove('active');
+      } else {
+        player.playVideo();
+        li.classList.add('active');
+      }
+    } else {
+      currentVideoId = videoId;
+      player.loadVideoById(videoId);
+      li.classList.add('active');
+    }
+  });
+</script>
+
+</body>
+</html>
