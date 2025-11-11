@@ -96,7 +96,7 @@
     flex-grow: 1;
     font-size: 1.05rem;
     line-height: 1.3;
-    text-align: left;
+    text-align: center;
   }
 
   /* Hide video but keep audio */
@@ -151,14 +151,17 @@
 
 <h2 id="pageTitle">🎧 Choose a Category</h2>
 
-<!-- Categories -->
-<div class="categories" id="categoryScreen">
-  <div class="category" data-category="music">🎵<br>Music</div>
-  <div class="category" data-category="shiurim">📖<br>Shiurim</div>
-</div>
-
 <!-- Back button -->
 <button id="backButton">⬅ Back</button>
+
+<!-- Categories -->
+<div class="categories" id="categoryScreen">
+  <div class="category" data-category="music">🎵<br>שירים</div>
+  <div class="category" data-category="shiurim">📖<br>שיעורים</div>
+</div>
+
+<!-- Subcategories -->
+<div class="categories" id="subcategoryScreen" style="display:none;"></div>
 
 <!-- Video List -->
 <ul id="videoList"></ul>
@@ -167,105 +170,160 @@
 <div id="player"></div>
 
 <script>
-  const videoData = {
-    music: [
+const videoData = {
+  music: {
+    אבא: [
       { id: "wOV6YBnjRNE", title: "צמאה (באבוב) || ישיבת מקור חיים" },
-      { id: "dPR6v_cywuU", title: "להקת אהללה - מחרוזת שירי שבת" },
-      { id: "lRWgH1CKHmM", title: "להקת אשירה || ועל הכל :: הפעם אודה :: יוסף הצדיק" }
+      { id: "lRWgH1CKHmM", title: "להקת אשירה || ועל הכל :: הפעם אודה :: יוסף הצדיק" },
+      { id: "dPR6v_cywuU", title: "להקת אהללה - מחרוזת שירי שבת" }
     ],
-    shiurim: [
-      { id: "iKznYQWZczI", title: "הרב זמיר כהן - אמונה וביטחון" },
-      { id: "LcxTxgQj9g4", title: "הרב יצחק פנגר - כוח הדיבור" },
+    אליהו: [
+      { id: "BAUagghhHno", title: "עקיבא | יש בך הכל" },
+      { id: "XzeyFpGtCUE", title: "עקיבא | צעדים" },
+      { id: "Y30pfWIQfoo", title: "ישי ריבו - לשוב הביתה" },
+      { id: "T5Wf3gmF6Do", title: "ישי ריבו - סיבת הסיבות" }
+    ]
+  },
+  shiurim: {
+    emuna: [
+      { id: "iKznYQWZczI", title: "הרב זמיר כהן - אמונה וביטחון" }
+    ],
+    dibur: [
+      { id: "LcxTxgQj9g4", title: "הרב יצחק פנגר - כוח הדיבור" }
+    ],
+    parasha: [
       { id: "7Vv4nTwMktI", title: "הרב יעקב עדס - שיעור בעומק הפרשה" }
     ]
-  };
-
-  let tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.body.appendChild(tag);
-
-  let player;
-  let currentVideoId = null;
-  let isPlaying = false;
-
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
-      height: '1',
-      width: '1',
-      videoId: '',
-      playerVars: { autoplay: 0, controls: 0, modestbranding: 1 },
-      events: { 'onStateChange': onPlayerStateChange }
-    });
   }
+};
 
-  function onPlayerStateChange(event) {
-    isPlaying = event.data === YT.PlayerState.PLAYING;
-  }
+let tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+document.body.appendChild(tag);
 
-  // Handle category click
-  document.getElementById('categoryScreen').addEventListener('click', e => {
-    const cat = e.target.closest('.category');
-    if (!cat) return;
-    const category = cat.dataset.category;
-    showVideoList(category);
+let player;
+let currentVideoId = null;
+let isPlaying = false;
+
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    height: '1',
+    width: '1',
+    videoId: '',
+    playerVars: { autoplay: 0, controls: 0, modestbranding: 1 },
+    events: { 'onStateChange': onPlayerStateChange }
+  });
+}
+
+function onPlayerStateChange(event) {
+  isPlaying = event.data === YT.PlayerState.PLAYING;
+}
+
+// Step 1: click on main category
+document.getElementById('categoryScreen').addEventListener('click', e => {
+  const cat = e.target.closest('.category');
+  if (!cat) return;
+  const category = cat.dataset.category;
+  showSubcategories(category);
+});
+
+// Step 2: show subcategories
+function showSubcategories(category) {
+  const subcategoryScreen = document.getElementById('subcategoryScreen');
+  subcategoryScreen.innerHTML = '';
+
+  const subcategories = Object.keys(videoData[category]);
+  subcategories.forEach(sub => {
+    const div = document.createElement('div');
+    div.className = 'category';
+    div.textContent = sub;
+    div.dataset.category = category;
+    div.dataset.subcategory = sub;
+    subcategoryScreen.appendChild(div);
   });
 
-  // Back button
-  document.getElementById('backButton').addEventListener('click', () => {
-    if (player && isPlaying) player.stopVideo(); // stop playback
-    document.getElementById('videoList').style.display = 'none';
-    document.getElementById('categoryScreen').style.display = 'grid';
+  document.getElementById('categoryScreen').style.display = 'none';
+  subcategoryScreen.style.display = 'grid';
+  document.getElementById('backButton').style.display = 'inline-block';
+  document.getElementById('pageTitle').textContent = '🎵 Choose a Subcategory';
+}
+
+// Step 3: click on subcategory
+document.getElementById('subcategoryScreen').addEventListener('click', e => {
+  const sub = e.target.closest('.category');
+  if (!sub) return;
+  const { category, subcategory } = sub.dataset;
+  showVideoList(category, subcategory);
+});
+
+// Step 4: show list of videos
+function showVideoList(category, subcategory) {
+  const list = document.getElementById('videoList');
+  list.innerHTML = '';
+
+  videoData[category][subcategory].forEach(v => {
+    const li = document.createElement('li');
+    const img = document.createElement('img');
+    img.src = `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
+    img.alt = v.title;
+    const span = document.createElement('span');
+    span.textContent = v.title;
+    li.appendChild(img);
+    li.appendChild(span);
+    li.dataset.id = v.id;
+    list.appendChild(li);
+  });
+
+  document.getElementById('subcategoryScreen').style.display = 'none';
+  list.style.display = 'block';
+  document.getElementById('pageTitle').textContent = '🎧 Choose a Track';
+}
+
+// Back button
+document.getElementById('backButton').addEventListener('click', () => {
+  if (player && isPlaying) player.stopVideo();
+
+  const list = document.getElementById('videoList');
+  const sub = document.getElementById('subcategoryScreen');
+  const cat = document.getElementById('categoryScreen');
+
+  if (list.style.display === 'block') {
+    list.style.display = 'none';
+    sub.style.display = 'grid';
+    document.getElementById('pageTitle').textContent = '🎵 Choose a Subcategory';
+  } else if (sub.style.display === 'grid') {
+    sub.style.display = 'none';
+    cat.style.display = 'grid';
     document.getElementById('backButton').style.display = 'none';
     document.getElementById('pageTitle').textContent = '🎧 Choose a Category';
-    currentVideoId = null;
-  });
-
-  // Show list for selected category
-  function showVideoList(category) {
-    const list = document.getElementById('videoList');
-    list.innerHTML = '';
-    videoData[category].forEach(v => {
-      const li = document.createElement('li');
-      const img = document.createElement('img');
-      img.src = `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
-      img.alt = v.title;
-      const span = document.createElement('span');
-      span.textContent = v.title;
-      li.appendChild(img);
-      li.appendChild(span);
-      li.dataset.id = v.id;
-      list.appendChild(li);
-    });
-
-    document.getElementById('categoryScreen').style.display = 'none';
-    list.style.display = 'block';
-    document.getElementById('backButton').style.display = 'inline-block';
-    document.getElementById('pageTitle').textContent =
-      category === 'music' ? '🎵 Music' : '📖 Shiurim';
   }
 
-  // Handle video click
-  document.getElementById('videoList').addEventListener('click', function(e) {
-    const li = e.target.closest('li');
-    if (!li) return;
-    const videoId = li.dataset.id;
-    document.querySelectorAll('#videoList li').forEach(el => el.classList.remove('active'));
+  currentVideoId = null;
+});
 
-    if (videoId === currentVideoId) {
-      if (isPlaying) {
-        player.pauseVideo();
-        li.classList.remove('active');
-      } else {
-        player.playVideo();
-        li.classList.add('active');
-      }
+// Handle video click
+document.getElementById('videoList').addEventListener('click', function(e) {
+  const li = e.target.closest('li');
+  if (!li) return;
+  const videoId = li.dataset.id;
+  document.querySelectorAll('#videoList li').forEach(el => el.classList.remove('active'));
+
+  if (videoId === currentVideoId) {
+    if (isPlaying) {
+      player.pauseVideo();
+      li.classList.remove('active');
     } else {
-      currentVideoId = videoId;
-      player.loadVideoById(videoId);
+      player.playVideo();
       li.classList.add('active');
     }
-  });
+  } else {
+    currentVideoId = videoId;
+    player.loadVideoById(videoId);
+    li.classList.add('active');
+  }
+});
 </script>
+
 
 </body>
 </html>
