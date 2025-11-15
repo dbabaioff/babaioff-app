@@ -252,6 +252,10 @@ function playNextVideo() {
   if (li) li.classList.add('active');
 }
 
+function autoDir(text) {
+    return /[\u0590-\u05FF]/.test(text) ? "rtl" : "ltr";
+}
+
 // Step 1: click on main category
 document.getElementById('categoryScreen').addEventListener('click', e => {
   const cat = e.target.closest('.category');
@@ -312,10 +316,6 @@ function showVideoList(category, subcategory) {
     li.dataset.id = v.id;
     list.appendChild(li);
   });
-  
-function autoDir(text) {
-    return /[\u0590-\u05FF]/.test(text) ? "rtl" : "ltr";
-}
 
   document.getElementById('subcategoryScreen').style.display = 'none';
   list.style.display = 'block';
