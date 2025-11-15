@@ -201,6 +201,8 @@ const videoData = {
   }
 };
 
+let currentListItems = [];
+
 let tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 document.body.appendChild(tag);
@@ -221,6 +223,33 @@ function onYouTubeIframeAPIReady() {
 
 function onPlayerStateChange(event) {
   isPlaying = event.data === YT.PlayerState.PLAYING;
+
+  // When video ends:
+  if (event.data === YT.PlayerState.ENDED) {
+    playNextVideo();
+  }
+}
+
+function playNextVideo() {
+  if (!currentVideoId) return;
+
+  // Find index of current video in the list
+  const index = currentListItems.findIndex(v => v.id === currentVideoId);
+
+  if (index === -1) return; // not found
+  if (index === currentListItems.length - 1) return; // reached end of list
+
+  // Load next video
+  const nextVideo = currentListItems[index + 1];
+  currentVideoId = nextVideo.id;
+  player.loadVideoById(nextVideo.id);
+
+  // Update active highlight in UI
+  document.querySelectorAll('#videoList li').forEach(el => {
+    el.classList.remove('active');
+  });
+  const li = document.querySelector(`#videoList li[data-id="${nextVideo.id}"]`);
+  if (li) li.classList.add('active');
 }
 
 // Step 1: click on main category
@@ -264,19 +293,29 @@ document.getElementById('subcategoryScreen').addEventListener('click', e => {
 function showVideoList(category, subcategory) {
   const list = document.getElementById('videoList');
   list.innerHTML = '';
+  
+  currentListItems = videoData[category][subcategory];
+
 
   videoData[category][subcategory].forEach(v => {
     const li = document.createElement('li');
     const img = document.createElement('img');
     img.src = `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
     img.alt = v.title;
+    
     const span = document.createElement('span');
     span.textContent = v.title;
+    span.dir = autoDir(v.title);
+    
     li.appendChild(img);
     li.appendChild(span);
     li.dataset.id = v.id;
     list.appendChild(li);
   });
+  
+function autoDir(text) {
+    return /[\u0590-\u05FF]/.test(text) ? "rtl" : "ltr";
+}
 
   document.getElementById('subcategoryScreen').style.display = 'none';
   list.style.display = 'block';
