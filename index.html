@@ -32,7 +32,7 @@
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 16px;
     max-width: 500px;
-    margin: 0 auto;
+    margin: 20px auto 0;
   }
 
   .category {
@@ -384,7 +384,10 @@ function showVideoList(category, subcategory) {
 
 // Back button
 document.getElementById('backButton').addEventListener('click', () => {
-  if (player && isPlaying) player.stopVideo();
+  if (player && isPlaying) {
+    player.stopVideo();
+    hideSkipButtons();
+  }
 
   const list = document.getElementById('videoList');
   const sub = document.getElementById('subcategoryScreen');
@@ -415,11 +418,15 @@ document.getElementById('videoList').addEventListener('click', function(e) {
     if (isPlaying) {
       player.pauseVideo();
       li.classList.remove('active');
-    } else {
+      hideSkipButtons();
+    }
+    else {
       player.playVideo();
       li.classList.add('active');
+      showSkipButtons();
     }
-  } else {
+  }
+  else {
     currentVideoId = videoId;
     player.loadVideoById(videoId);
     li.classList.add('active');
@@ -431,6 +438,11 @@ document.getElementById('videoList').addEventListener('click', function(e) {
 function showSkipButtons() {
   document.getElementById("skipBack").style.display = "inline-block";
   document.getElementById("skipForward").style.display = "inline-block";
+}
+
+function hideSkipButtons() {
+  document.getElementById("skipBack").style.display = "none";
+  document.getElementById("skipForward").style.display = "none";
 }
 
 // Skip backward 10 seconds
