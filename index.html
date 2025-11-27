@@ -123,6 +123,36 @@
   #backButton:hover {
     background: #0056b3;
   }
+  
+  #toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background: var(--bg);
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  #toolbar button {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+  }
+
+  #toolbar button:hover {
+    background: #0056b3;
+  }
+  
+  #skipBack, #skipForward {
+    display: none;
+  }
 
   /* Mobile adjustments */
   @media (max-width: 480px) {
@@ -153,6 +183,11 @@
 
 <!-- Back button -->
 <button id="backButton">⬅ Back</button>
+<div id="toolbar">
+  <button id="backButton">⬅ Back</button>
+  <button id="skipBack">⏪ 10s</button>
+  <button id="skipForward">⏩ 10s</button>
+</div>
 
 <!-- Categories -->
 <div class="categories" id="categoryScreen">
@@ -388,7 +423,29 @@ document.getElementById('videoList').addEventListener('click', function(e) {
     currentVideoId = videoId;
     player.loadVideoById(videoId);
     li.classList.add('active');
+    showSkipButtons();
   }
+});
+
+// Show skip buttons when video loaded
+function showSkipButtons() {
+  document.getElementById("skipBack").style.display = "inline-block";
+  document.getElementById("skipForward").style.display = "inline-block";
+}
+
+// Skip backward 10 seconds
+document.getElementById("skipBack").addEventListener("click", () => {
+  if (!player) return;
+  let t = player.getCurrentTime() - 10;
+  if (t < 0) t = 0;
+  player.seekTo(t, true);
+});
+
+// Skip forward 10 seconds
+document.getElementById("skipForward").addEventListener("click", () => {
+  if (!player) return;
+  let t = player.getCurrentTime() + 10;
+  player.seekTo(t, true);
 });
 </script>
 
