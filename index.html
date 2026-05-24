@@ -10,12 +10,18 @@
     --bg: #f8f9fa;
     --hover: #e0e0e0;
     --active: #cce5ff;
+    --now-playing-bg: #1a1a2e;
+    --now-playing-text: #ffffff;
+    --progress-bg: rgba(255,255,255,0.2);
+    --progress-fill: #4fc3f7;
+    --now-playing-height: 90px;
   }
 
   body {
     font-family: system-ui, sans-serif;
     margin: 0;
     padding: 20px;
+    padding-bottom: calc(var(--now-playing-height) + 20px);
     background: var(--bg);
     color: #333;
     text-align: center;
@@ -26,7 +32,6 @@
     margin-bottom: 20px;
   }
 
-  /* Category grid */
   .categories {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -53,7 +58,6 @@
     transform: translateY(-2px);
   }
 
-  /* Video list */
   #videoList {
     display: none;
     list-style: none;
@@ -75,14 +79,8 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   }
 
-  li:hover {
-    background: var(--hover);
-    transform: translateY(-2px);
-  }
-
-  li.active {
-    background: var(--active);
-  }
+  li:hover { background: var(--hover); transform: translateY(-2px); }
+  li.active { background: var(--active); }
 
   li img {
     width: 100px;
@@ -99,7 +97,6 @@
     text-align: center;
   }
 
-  /* Hide video but keep audio */
   #player {
     width: 1px;
     height: 1px;
@@ -108,22 +105,6 @@
     position: absolute;
   }
 
-  /* Back button */
-  #backButton {
-    display: none;
-    margin: 15px auto;
-    padding: 10px 20px;
-    border: none;
-    background: var(--primary);
-    color: white;
-    border-radius: 6px;
-    font-size: 1rem;
-    cursor: pointer;
-  }
-  #backButton:hover {
-    background: #0056b3;
-  }
-  
   #toolbar {
     position: sticky;
     top: 0;
@@ -145,39 +126,152 @@
     color: white;
     cursor: pointer;
   }
-  
-  #skipBack {
-    margin-right: 10px;
+  #toolbar button:hover { background: #0056b3; }
+
+  #skipBack, #skipForward { display: none; }
+
+  /* ── NOW PLAYING BAR ── */
+  #nowPlayingBar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--now-playing-height);
+    background: var(--now-playing-bg);
+    color: var(--now-playing-text);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 16px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.35);
+    z-index: 1000;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  #toolbar button:hover {
-    background: #0056b3;
-  }
-  
-  #skipBack, #skipForward {
-    display: none;
+  #nowPlayingBar.visible {
+    transform: translateY(0);
   }
 
-  /* Mobile adjustments */
+  /* Top row: thumbnail + title + controls */
+  .np-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  #npThumb {
+    width: 44px;
+    height: 33px;
+    border-radius: 5px;
+    object-fit: cover;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  #npThumb.loaded { opacity: 1; }
+
+  #npTitle {
+    flex-grow: 1;
+    font-size: 0.88rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.01em;
+  }
+
+  .np-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .np-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    line-height: 1;
+    transition: background 0.15s;
+  }
+  .np-btn:hover { background: rgba(255,255,255,0.15); }
+  .np-btn:active { background: rgba(255,255,255,0.25); }
+
+  /* Bottom row: time + progress slider */
+  .np-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .np-time {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.65);
+    font-variant-numeric: tabular-nums;
+    min-width: 34px;
+    flex-shrink: 0;
+  }
+  .np-time.right { text-align: right; }
+
+  /* Custom range slider */
+  #progressSlider {
+    flex-grow: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--progress-bg);
+    outline: none;
+    cursor: pointer;
+    position: relative;
+  }
+
+  #progressSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--progress-fill);
+    cursor: pointer;
+    box-shadow: 0 0 4px rgba(79,195,247,0.7);
+    transition: transform 0.1s;
+  }
+  #progressSlider::-webkit-slider-thumb:hover { transform: scale(1.3); }
+
+  #progressSlider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--progress-fill);
+    cursor: pointer;
+    border: none;
+  }
+
+  /* filled track via background gradient */
+  #progressSlider {
+    background: linear-gradient(
+      to right,
+      var(--progress-fill) 0%,
+      var(--progress-fill) var(--progress-pct, 0%),
+      var(--progress-bg) var(--progress-pct, 0%),
+      var(--progress-bg) 100%
+    );
+  }
+
   @media (max-width: 480px) {
-    h2 {
-      font-size: 1.3rem;
-    }
-    .category {
-      padding: 25px 5px;
-      font-size: 1rem;
-    }
-    li {
-      padding: 14px 16px;
-      gap: 16px;
-    }
-    li img {
-      width: 120px;
-      height: 90px;
-    }
-    li span {
-      font-size: 1rem;
-    }
+    h2 { font-size: 1.3rem; }
+    .category { padding: 25px 5px; font-size: 1rem; }
+    li { padding: 14px 16px; gap: 16px; }
+    li img { width: 120px; height: 90px; }
+    li span { font-size: 1rem; }
+    #npTitle { font-size: 0.8rem; }
   }
 </style>
 </head>
@@ -185,28 +279,40 @@
 
 <h2 id="pageTitle">🎧 Choose a Category</h2>
 
-<!-- Back button -->
-<button id="backButton">⬅ Back</button>
 <div id="toolbar">
   <button id="backButton">⬅ Back</button>
   <button id="skipBack">⏪ 10s</button>
   <button id="skipForward">⏩ 10s</button>
 </div>
 
-<!-- Categories -->
 <div class="categories" id="categoryScreen">
   <div class="category" data-category="music">🎵<br>שירים</div>
   <div class="category" data-category="shiurim">📖<br>שיעורים</div>
 </div>
 
-<!-- Subcategories -->
 <div class="categories" id="subcategoryScreen" style="display:none;"></div>
 
-<!-- Video List -->
 <ul id="videoList"></ul>
 
-<!-- YouTube player (hidden) -->
 <div id="player"></div>
+
+<!-- NOW PLAYING BAR -->
+<div id="nowPlayingBar">
+  <div class="np-top">
+    <img id="npThumb" src="" alt="">
+    <span id="npTitle">—</span>
+    <div class="np-controls">
+      <button class="np-btn" id="npPrevBtn" title="Previous">⏮</button>
+      <button class="np-btn" id="npPlayPauseBtn" title="Play/Pause">▶</button>
+      <button class="np-btn" id="npNextBtn" title="Next">⏭</button>
+    </div>
+  </div>
+  <div class="np-progress-row">
+    <span class="np-time" id="npCurrentTime">0:00</span>
+    <input type="range" id="progressSlider" min="0" max="100" value="0" step="0.1">
+    <span class="np-time right" id="npDuration">0:00</span>
+  </div>
+</div>
 
 <script>
 const videoData = {
@@ -215,9 +321,9 @@ const videoData = {
       { id: "wOV6YBnjRNE", title: "צמאה (באבוב) || ישיבת מקור חיים" },
       { id: "lRWgH1CKHmM", title: "להקת אשירה || ועל הכל :: הפעם אודה :: יוסף הצדיק" },
       { id: "dPR6v_cywuU", title: "להקת אהללה - מחרוזת שירי שבת" },
-      { id: "fVtUmKtEomw", title: "להקת זמרת הארץ - להקה לחתונה - בורא עולם | כי יש ה' (הרב יהושע שפירא) | ובכן צדיקים | תרננה שפתי"},
+      { id: "fVtUmKtEomw", title: "להקת זמרת הארץ - בורא עולם | כי יש ה' | ובכן צדיקים | תרננה שפתי"},
       { id: "2AWLqffzR9k", title: "לכה דודי - אומנים שונים"},
-      { id: "9oDlNJle_Bs", title: "הראל טל ולהקתו - קליפ שירי חתונה | ברוך הוא | מזמור לתודה | מחשבות טובות"},
+      { id: "9oDlNJle_Bs", title: "הראל טל ולהקתו - ברוך הוא | מזמור לתודה | מחשבות טובות"},
       { id: "_DEatQdfg6s", title: "תרננה שפתי - אודי דוידי"},
       { id: "GAfCioh7Mp4", title: "תתן אחרית לעמך - הראל טל"},
       { id: "dEVasMk6Hjs", title: "בואו שעריו בתודה | ישיבת רמת גן ולהקת זמרת הארץ"},
@@ -225,14 +331,14 @@ const videoData = {
       { id: "A7d2i3LuD0M", title: "להקת אשירה - מחרוזת מזמור לתודה! 🇮🇱"},
       { id: "xJ9aLwbGeCs", title: "יצחק מאיר - והביאותים - מתוך סליחות תשעז"},
       { id: "ryTO71_eMO4", title: "נתן גושן וישי ריבו - נחכה לך"},
-      { id: "QURkPwVwjKs", title: "מחרוזת פורים איחוד הלהקות - מזמור שיר, אהללה, לב טהור, להבה, שיר חדש, נכספה"},
+      { id: "QURkPwVwjKs", title: "מחרוזת פורים איחוד הלהקות"},
       { id: "bltg_9sEqFg", title: "אורי שבח ובניו | עונג שבת"},
-      { id: "1QuNAhONztA", title: "מחרוזת שירי שבת חדשה!! להקת נשמחה - להקה לחתונה והישיבה הקדם צבאית ברוכין"},
-      { id: "C-Tk8scbygI", title: "מחרוזת סוכות איחוד הלהקות מארחים את מרדכי יצהר- אהללה, מזמור שיר, שיר חדש, נשמחה, הניגון שבלב"},
+      { id: "1QuNAhONztA", title: "מחרוזת שירי שבת חדשה!! להקת נשמחה"},
+      { id: "C-Tk8scbygI", title: "מחרוזת סוכות איחוד הלהקות"},
       { id: "VYjIKJppUGc", title: "ממקומך - יונתן רזאל וישיבת אורות שאול"},
       { id: "DWVNVnFn9nw", title: "קבלת שבת ישיבת נחלת יוסף שבי שומרון"},
-      { id: "TBt-55E6nEs", title: "להקת אשירה מארחת את ישיבת אלון מורה • מחרוזת שירי גאולה!🇮🇱 הושיעה את עמך - קה זכות אבות -יבנה המקדש"},
-      { id: "GsBn1d7GC1s", title: "מחרוזת שירי שמחת בית השואבה| להקת שיר חדש| מתוך הקלטה חיה של שמחת בית השואבה ב'מכון מאיר' התשפ"},
+      { id: "TBt-55E6nEs", title: "להקת אשירה מארחת את ישיבת אלון מורה • מחרוזת שירי גאולה!🇮🇱"},
+      { id: "GsBn1d7GC1s", title: "מחרוזת שירי שמחת בית השואבה| להקת שיר חדש"},
       { id: "98CfUnF52AM", title: "טובה הארץ - להקת ארמונ-יה"},
       { id: "5YRlr1pzhnY", title: "יצחק מאיר וחיליק פרנק - שמחת בית השואבה"},
       { id: "NrOx7Rtp8DE", title: "ניגוני הכנה להדלקת נרות חנוכה ושירי שמחה והודאה"},
@@ -241,10 +347,10 @@ const videoData = {
       { id: "dsz7J1_mZFE", title: "מחרוזת ניגוני הלל ושמחה | ישיבת רועה ישראל"},
       { id: "R2hlfGtGyRM", title: "שָׂמַחְתִּי בְּאֹמְרִים לִי - הישיבה הגבוהה מצפה יריחו"},
       { id: "VLKGccsmBb0", title: "יצחק מאיר, הראל טל, יהונתן ניצן ויענקי ברוין - מחרוזת חנוכה"},
-      { id: "-_2flPQE320", title: "להקת אשירה - משכן || ניגון ברדיצ'ב || טוב להודות || שובי השולמית || איילת חן"},
+      { id: "-_2flPQE320", title: "להקת אשירה - משכן || ניגון ברדיצ'ב || טוב להודות"},
       { id: "6IwfcrdAkYA", title: "שערי שמים פתח - ישיבת נחלת יוסף שבי שומרון"},
       { id: "x-C3TOvAqLc", title: "יהי שלום בחיליך - רבי שלמה קרליבך"},
-      { id: "aktElnQz6Xs", title: "אם היו בני אדם מרגישים- בנות הרב רזיאל שבח, יצחק מאיר, חנוך וסרמן, צחי קליין, אברהם יצחק רוזנצווי"},
+      { id: "aktElnQz6Xs", title: "אם היו בני אדם מרגישים- בנות הרב רזיאל שבח ואחרים"},
       { id: "eEeNw9zbm4c", title: "אוהב ישראל - הרב אלישע וישליצקי זצל"},
       { id: "zl8L2LAZnJA", title: "אתה בחרתנו || להקת מזמור שיר"},
       { id: "_o3_NMI-EcE", title: "בראשית שמות(כד ספרי התנך) תלמוד תורה ברוכין"},
@@ -253,15 +359,14 @@ const videoData = {
       { id: "Yk48pg6xjHY", title: "עָזְרֵנִי אֵל חַי"},
       { id: "15N484W5mnE", title: "אֵל אֵלִיָּהוּ"},
       { id: "nC9ouuNnvTA", title: "דרור יקרא לבן עם בת"},
-      { id: "0wS0-_fFytQ", title: "מַה יְּדִידוּת מְנוּחָתֵךְ"},
+      { id: "0wS0-_fFytQ", title: "מַה יְּדִידוּת מְנוּחָתֵךְ"},
       { id: "l7unv5xFt7A", title: "כי אשמרה שבת"},
-      { id: "sHJ3QZZLuQs", title: "יוֹם הַשַּׁבָּת אֵין כָּמוֹהוּ"},
+      { id: "sHJ3QZZLuQs", title: "יוֹם הַשַּׁבָּת אֵין כָּמוֹהוּ"},
       { id: "NROE0VgrrW0", title: "שיר של הבבא סאלי קדוש זצוקל - אעופה אשכונה"},
-      { id: "pAcYo9581WI", title: "אשמח בך - יודו לך רעיוני- רבי ישראל אביחצירא - הבבא סאלי - זיעא"},
+      { id: "pAcYo9581WI", title: "אשמח בך - יודו לך רעיוני- רבי ישראל אביחצירא - הבבא סאלי"},
       { id: "InN4iUVZuvM", title: "אשרי מי שגדול בתורה"},
       { id: "RjPfFTf3Vko", title: "מחרוזת שירי מקדש וגאולה 2 ! - ישיבת הר הבית" },
       { id: "UaCOkePkXss", title: "להקת מזמור שיר במחרוזת שירי תורה - סיום מסכת ארצי בסוגיה היומית" },
-      //{ id: "", title: ""},
     ],
     אליהו: [
       { id: "BAUagghhHno", title: "עקיבא | יש בך הכל" },
@@ -274,157 +379,254 @@ const videoData = {
       { id: "Vd0zH0KGivQ", title: "שירים לבקיאות בתנך"},
       { id: "S2Yxq1It-zY", title: "מַה נָּאווּ עֲלֵי"},
       { id: "15N484W5mnE", title: "אֵל אֵלִיָּהוּ"},
-      { id: "sHJ3QZZLuQs", title: "יוֹם הַשַּׁבָּת אֵין כָּמוֹהוּ"}
+      { id: "sHJ3QZZLuQs", title: "יוֹם הַשַּׁבָּת אֵין כָּמוֹהוּ"}
     ]
   },
   shiurim: {
     "הרב שמואל אליהו": [
       { id: "9NHPq0KFbns", title: "חיים כהלכה | שאלות ותשובות עם הרב שמואל אליהו | לערב שבת פרשת חיי שרה תשפו" },
       { id: "sGD_uREse9g", title: "כבוד האישה | הרב שמואל אליהו" },
-      { id: "sGD_uREse9g", title: "כבוד האישה | הרב שמואל אליהו" },
       { id: "WDWgR1U_w04", title: "לחזות את העתיד | הרב שמואל אליהו | שיעור במדרשת תכלת" },
       { id: "IVOfiFcdU_M", title: "מרן הרב שמואל אליהו שליטא | שות מיוחד בעניין כללי הפסיקה" },
       { id: "Cub3nkmtPQg", title: "חיים כהלכה | שאלות ותשובות עם הרב שמואל אליהו | לערב שבת פרשת וישלח תשפו" },
       { id: "8a5pi2_BitE", title: "החשיבות הגדולה של היופי והסכנה שבו | שיעור מדרשת תכלת | ד' כסלו תשפו" },
-      { id: "cHE0qWFkZ3A", title: "חיים כהלכה | שאלות ותשובות עם הרב שמואל אליהו בהנחיית הרב אבי ברמן לערב חג השבועות תשפו" }
+      { id: "cHE0qWFkZ3A", title: "חיים כהלכה | שאלות ותשובות עם הרב שמואל אליהו | לערב חג השבועות תשפו" }
     ],
     שיעורים: [
       { id: "-2UaM7eCcXI", title: "הרב משה הררי שליטא | חשיבות שימוש חכמים - הלכות חגי תשרי" },
       { id: "oWzcPIphprI", title: "הרהג דביר זעפרני שליטא | ברכות הראייה" },
       { id: "4onMRhWlwn8", title: "הרה״ג ישי אחיטוב שליט״א | קבלת הוראות מרן" },
-      { id: "dzxsm4sHuTY", title: "מתי חוגגים פורים בבית שמש, מבשרת, רמות, ועוד ? - ביאור סוגיית סמוך ונראה - הרה״ג יוסף אליהו שליט״א" },
-      //{ id: "", title: "" },
+      { id: "dzxsm4sHuTY", title: "מתי חוגגים פורים בבית שמש, מבשרת, רמות, ועוד ? - הרה״ג יוסף אליהו שליט״א" },
     ]
   }
 };
 
 let currentListItems = [];
+let currentVideoId = null;
+let isPlaying = false;
+let isSeeking = false;
+let progressInterval = null;
 
-let tag = document.createElement('script');
+// Load YouTube API
+const tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 document.body.appendChild(tag);
 
 let player;
-let currentVideoId = null;
-let isPlaying = false;
 
 function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
-    height: '1',
-    width: '1',
-    videoId: '',
+    height: '1', width: '1', videoId: '',
     playerVars: { autoplay: 0, controls: 0, modestbranding: 1 },
-    events: { 'onStateChange': onPlayerStateChange }
+    events: { onStateChange: onPlayerStateChange }
   });
 }
 
 function onPlayerStateChange(event) {
   isPlaying = event.data === YT.PlayerState.PLAYING;
+  updatePlayPauseUI();
 
-  // When video ends:
-  if (event.data === YT.PlayerState.ENDED) {
-    playNextVideo();
+  if (event.data === YT.PlayerState.PLAYING) {
+    startProgressPolling();
+  } else {
+    stopProgressPolling();
+    if (event.data === YT.PlayerState.ENDED) {
+      playAdjacentVideo(1);
+    }
   }
 }
 
-function playNextVideo() {
-  if (!currentVideoId) return;
+// ── PROGRESS POLLING ──────────────────────────────────────────
+function startProgressPolling() {
+  stopProgressPolling();
+  progressInterval = setInterval(updateProgress, 500);
+}
 
-  // Find index of current video in the list
-  const index = currentListItems.findIndex(v => v.id === currentVideoId);
+function stopProgressPolling() {
+  if (progressInterval) { clearInterval(progressInterval); progressInterval = null; }
+}
 
-  if (index === -1) return; // not found
-  if (index === currentListItems.length - 1) return; // reached end of list
+function updateProgress() {
+  if (!player || !player.getCurrentTime || isSeeking) return;
+  const current = player.getCurrentTime() || 0;
+  const duration = player.getDuration() || 0;
+  if (duration === 0) return;
 
-  // Load next video
-  const nextVideo = currentListItems[index + 1];
-  currentVideoId = nextVideo.id;
-  player.loadVideoById(nextVideo.id);
+  const pct = (current / duration) * 100;
+  const slider = document.getElementById('progressSlider');
+  slider.value = pct;
+  slider.style.setProperty('--progress-pct', pct + '%');
 
-  // Update active highlight in UI
+  document.getElementById('npCurrentTime').textContent = formatTime(current);
+  document.getElementById('npDuration').textContent = formatTime(duration);
+}
+
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+// ── NOW PLAYING BAR ──────────────────────────────────────────
+function showNowPlayingBar(video) {
+  const bar = document.getElementById('nowPlayingBar');
+  const thumb = document.getElementById('npThumb');
+  const title = document.getElementById('npTitle');
+
+  thumb.classList.remove('loaded');
+  thumb.src = `https://img.youtube.com/vi/${video.id}/mqdefault.jpg`;
+  thumb.onload = () => thumb.classList.add('loaded');
+  title.textContent = video.title;
+  title.dir = autoDir(video.title);
+
+  bar.classList.add('visible');
+}
+
+function updatePlayPauseUI() {
+  document.getElementById('npPlayPauseBtn').textContent = isPlaying ? '⏸' : '▶';
+}
+
+// ── PLAY LOGIC ───────────────────────────────────────────────
+function playVideo(videoId) {
+  const video = currentListItems.find(v => v.id === videoId);
+  if (!video) return;
+
+  currentVideoId = videoId;
+  player.loadVideoById(videoId);
+  showNowPlayingBar(video);
+
+  // Reset progress
+  document.getElementById('progressSlider').value = 0;
+  document.getElementById('progressSlider').style.setProperty('--progress-pct', '0%');
+  document.getElementById('npCurrentTime').textContent = '0:00';
+  document.getElementById('npDuration').textContent = '0:00';
+
+  highlightActiveTrack(videoId);
+  scrollToActiveTrack(videoId);
+}
+
+function highlightActiveTrack(videoId) {
   document.querySelectorAll('#videoList li').forEach(el => {
-    el.classList.remove('active');
+    el.classList.toggle('active', el.dataset.id === videoId);
   });
-  const li = document.querySelector(`#videoList li[data-id="${nextVideo.id}"]`);
-  if (li) li.classList.add('active');
 }
 
+function scrollToActiveTrack(videoId) {
+  const li = document.querySelector(`#videoList li[data-id="${videoId}"]`);
+  if (li) {
+    li.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function playAdjacentVideo(direction) {
+  if (!currentVideoId || currentListItems.length === 0) return;
+  const index = currentListItems.findIndex(v => v.id === currentVideoId);
+  if (index === -1) return;
+  const nextIndex = index + direction;
+  if (nextIndex < 0 || nextIndex >= currentListItems.length) return;
+  playVideo(currentListItems[nextIndex].id);
+}
+
+// ── NOW PLAYING CONTROLS ─────────────────────────────────────
+document.getElementById('npPlayPauseBtn').addEventListener('click', () => {
+  if (!player || !currentVideoId) return;
+  isPlaying ? player.pauseVideo() : player.playVideo();
+});
+
+document.getElementById('npPrevBtn').addEventListener('click', () => playAdjacentVideo(-1));
+document.getElementById('npNextBtn').addEventListener('click', () => playAdjacentVideo(1));
+
+// ── PROGRESS SLIDER ───────────────────────────────────────────
+const slider = document.getElementById('progressSlider');
+
+slider.addEventListener('mousedown', () => { isSeeking = true; });
+slider.addEventListener('touchstart', () => { isSeeking = true; }, { passive: true });
+
+slider.addEventListener('input', () => {
+  if (!player || !player.getDuration) return;
+  const pct = parseFloat(slider.value);
+  slider.style.setProperty('--progress-pct', pct + '%');
+  const duration = player.getDuration() || 0;
+  document.getElementById('npCurrentTime').textContent = formatTime((pct / 100) * duration);
+});
+
+slider.addEventListener('change', () => {
+  if (!player || !player.getDuration) return;
+  const pct = parseFloat(slider.value);
+  const duration = player.getDuration() || 0;
+  player.seekTo((pct / 100) * duration, true);
+  isSeeking = false;
+});
+
+slider.addEventListener('mouseup', () => { isSeeking = false; });
+slider.addEventListener('touchend', () => { isSeeking = false; });
+
+// ── NAVIGATION ────────────────────────────────────────────────
 function autoDir(text) {
-    return /[\u0590-\u05FF]/.test(text) ? "rtl" : "ltr";
+  return /[\u0590-\u05FF]/.test(text) ? "rtl" : "ltr";
 }
 
-// Step 1: click on main category
 document.getElementById('categoryScreen').addEventListener('click', e => {
   const cat = e.target.closest('.category');
   if (!cat) return;
-  const category = cat.dataset.category;
-  showSubcategories(category);
+  showSubcategories(cat.dataset.category);
 });
 
-// Step 2: show subcategories
 function showSubcategories(category) {
-  const subcategoryScreen = document.getElementById('subcategoryScreen');
-  subcategoryScreen.innerHTML = '';
-
-  const subcategories = Object.keys(videoData[category]);
-  subcategories.forEach(sub => {
+  const screen = document.getElementById('subcategoryScreen');
+  screen.innerHTML = '';
+  Object.keys(videoData[category]).forEach(sub => {
     const div = document.createElement('div');
     div.className = 'category';
     div.textContent = sub;
     div.dataset.category = category;
     div.dataset.subcategory = sub;
-    subcategoryScreen.appendChild(div);
+    screen.appendChild(div);
   });
-
   document.getElementById('categoryScreen').style.display = 'none';
-  subcategoryScreen.style.display = 'grid';
-  document.getElementById('backButton').style.display = 'inline-block';
-  document.getElementById('pageTitle').textContent = '🎵 Choose a Subcategory';
+  screen.style.display = 'grid';
+  document.getElementById('pageTitle').textContent = '📂 Choose a Subcategory';
 }
 
-// Step 3: click on subcategory
 document.getElementById('subcategoryScreen').addEventListener('click', e => {
   const sub = e.target.closest('.category');
   if (!sub) return;
-  const { category, subcategory } = sub.dataset;
-  showVideoList(category, subcategory);
+  showVideoList(sub.dataset.category, sub.dataset.subcategory);
 });
 
-// Step 4: show list of videos
 function showVideoList(category, subcategory) {
   const list = document.getElementById('videoList');
   list.innerHTML = '';
-  
   currentListItems = videoData[category][subcategory];
 
-
-  videoData[category][subcategory].forEach(v => {
+  currentListItems.forEach(v => {
     const li = document.createElement('li');
+    li.dataset.id = v.id;
+    if (v.id === currentVideoId) li.classList.add('active');
+
     const img = document.createElement('img');
     img.src = `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
     img.alt = v.title;
-    
+
     const span = document.createElement('span');
     span.textContent = v.title;
     span.dir = autoDir(v.title);
-    
+
     li.appendChild(img);
     li.appendChild(span);
-    li.dataset.id = v.id;
     list.appendChild(li);
   });
 
   document.getElementById('subcategoryScreen').style.display = 'none';
   list.style.display = 'block';
   document.getElementById('pageTitle').textContent = '🎧 Choose a Track';
+
+  // If something is already playing in this list, scroll to it
+  if (currentVideoId) scrollToActiveTrack(currentVideoId);
 }
 
-// Back button
 document.getElementById('backButton').addEventListener('click', () => {
-  if (player && isPlaying) {
-    player.stopVideo();
-    hideSkipButtons();
-  }
+  if (player && isPlaying) player.pauseVideo();
 
   const list = document.getElementById('videoList');
   const sub = document.getElementById('subcategoryScreen');
@@ -433,72 +635,35 @@ document.getElementById('backButton').addEventListener('click', () => {
   if (list.style.display === 'block') {
     list.style.display = 'none';
     sub.style.display = 'grid';
-    document.getElementById('pageTitle').textContent = '🎵 Choose a Subcategory';
+    document.getElementById('pageTitle').textContent = '📂 Choose a Subcategory';
   } else if (sub.style.display === 'grid') {
     sub.style.display = 'none';
     cat.style.display = 'grid';
-    document.getElementById('backButton').style.display = 'none';
     document.getElementById('pageTitle').textContent = '🎧 Choose a Category';
   }
-
-  currentVideoId = null;
 });
 
-// Handle video click
-document.getElementById('videoList').addEventListener('click', function(e) {
+document.getElementById('videoList').addEventListener('click', e => {
   const li = e.target.closest('li');
   if (!li) return;
   const videoId = li.dataset.id;
-  document.querySelectorAll('#videoList li').forEach(el => el.classList.remove('active'));
 
   if (videoId === currentVideoId) {
-    if (isPlaying) {
-      player.pauseVideo();
-      li.classList.remove('active');
-      hideSkipButtons();
-    }
-    else {
-      player.playVideo();
-      li.classList.add('active');
-      showSkipButtons();
-    }
-  }
-  else {
-    currentVideoId = videoId;
-    player.loadVideoById(videoId);
-    li.classList.add('active');
-    showSkipButtons();
+    isPlaying ? player.pauseVideo() : player.playVideo();
+  } else {
+    playVideo(videoId);
   }
 });
 
-// Show skip buttons when video loaded
-function showSkipButtons() {
-  document.getElementById("skipBack").style.display = "inline-block";
-  document.getElementById("skipForward").style.display = "inline-block";
-}
-
-function hideSkipButtons() {
-  document.getElementById("skipBack").style.display = "none";
-  document.getElementById("skipForward").style.display = "none";
-}
-
-// Skip backward 10 seconds
-document.getElementById("skipBack").addEventListener("click", () => {
+document.getElementById('skipBack').addEventListener('click', () => {
   if (!player) return;
-  let t = player.getCurrentTime() - 10;
-  if (t < 0) t = 0;
-  player.seekTo(t, true);
+  player.seekTo(Math.max(0, player.getCurrentTime() - 10), true);
 });
 
-// Skip forward 10 seconds
-document.getElementById("skipForward").addEventListener("click", () => {
+document.getElementById('skipForward').addEventListener('click', () => {
   if (!player) return;
-  let t = player.getCurrentTime() + 10;
-  player.seekTo(t, true);
+  player.seekTo(player.getCurrentTime() + 10, true);
 });
 </script>
-
-
 </body>
 </html>
-
