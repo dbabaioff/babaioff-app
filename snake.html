@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>משחק הנחש</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sky:    #fff9f0;
+      --yellow: #ffd54f;
+      --orange: #ff7043;
+      --green:  #66bb6a;
+      --dark:   #3d2314;
+      --white:  #ffffff;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--sky);
+      background-image:
+        radial-gradient(circle at 20% 20%, #ffd54f33 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, #66bb6a33 0%, transparent 40%);
+      font-family: 'Rubik', sans-serif;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: 28px 16px 48px;
+      gap: 20px;
+    }
+
+    .back-link {
+      align-self: flex-start;
+      font-weight: 700; font-size: 15px;
+      color: var(--dark);
+      text-decoration: none;
+      background: var(--white);
+      border: 3px solid var(--dark);
+      border-radius: 50px;
+      padding: 6px 18px;
+      box-shadow: 3px 3px 0 var(--dark);
+      transition: transform 0.15s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .back-link:hover { transform: translateY(-2px); }
+
+    h1 {
+      font-weight: 900;
+      font-size: clamp(32px, 7vw, 52px);
+      color: var(--orange);
+      -webkit-text-stroke: 3px var(--dark);
+      text-shadow: 4px 4px 0 var(--dark);
+      animation: bounce 2s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0) rotate(-1deg); }
+      50%      { transform: translateY(-6px) rotate(1deg); }
+    }
+
+    .game-frame-wrap {
+      border-radius: 20px;
+      overflow: hidden;
+      border: 4px solid var(--dark);
+      box-shadow: 6px 6px 0 var(--dark);
+      width: 100%;
+      max-width: 600px;
+      background: #fff;
+    }
+
+    .game-frame-wrap iframe {
+      display: block;
+      width: 100%;
+      height: 480px;
+      border: none;
+    }
+
+    .hint {
+      font-size: 14px; font-weight: 700; color: #aaa;
+      text-align: center;
+    }
+
+    @media (max-width: 500px) {
+      .game-frame-wrap iframe { height: 380px; }
+    }
+  </style>
+</head>
+<body>
+
+<a class="back-link" href="index.html">&#8594; חזרה למשחקים</a>
+
+<h1>&#128013; משחק הנחש</h1>
+
+<div class="game-frame-wrap">
+  <iframe
+    src="https://www.google.com/fbx?fbx=snake_arcade&fbxga=1&hl=he"
+    title="משחק הנחש של גוגל"
+    allowfullscreen
+    sandbox="allow-scripts allow-same-origin allow-popups"
+  ></iframe>
+</div>
+
+<p class="hint">&#127918; השתמש במקשי החצים כדי לשחק!</p>
+
+</body>
+</html>
