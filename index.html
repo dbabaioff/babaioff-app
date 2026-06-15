@@ -128,8 +128,6 @@
   }
   #toolbar button:hover { background: #0056b3; }
 
-  #skipBack, #skipForward { display: none; }
-
   /* ── NOW PLAYING BAR ── */
   #nowPlayingBar {
     position: fixed;
@@ -288,10 +286,25 @@
 <div class="categories" id="categoryScreen">
   <div class="category" data-category="music">🎵<br>שירים</div>
   <div class="category" data-category="shiurim">📖<br>שיעורים</div>
+  <div class="category" data-category="links">🔗<br>Url</div>
   <div class="category" data-categpry="games">🎮<br><a href="game.html">משחקים</a></div>
 </div>
 
 <div class="categories" id="subcategoryScreen" style="display:none;"></div>
+<div id="linksScreen" style="display:none; max-width:600px; margin:auto;">
+    <input
+        id="youtubeUrl"
+        type="text"
+        placeholder="Paste YouTube URL"
+        style="width:100%;padding:12px;font-size:16px;"
+    >
+    <button
+        id="playLinkBtn"
+        style="margin-top:10px;padding:10px 20px;"
+    >
+        Play
+    </button>
+</div>
 
 <ul id="videoList"></ul>
 
@@ -570,6 +583,12 @@ function autoDir(text) {
 document.getElementById('categoryScreen').addEventListener('click', e => {
   const cat = e.target.closest('.category');
   if (!cat) return;
+
+  if (cat.dataset.category === 'links') {
+      showLinksPage();
+      return;
+  }
+  
   showSubcategories(cat.dataset.category);
 });
 
@@ -626,18 +645,62 @@ function showVideoList(category, subcategory) {
   if (currentVideoId) scrollToActiveTrack(currentVideoId);
 }
 
+function showLinksPage() {
+    document.getElementById('categoryScreen').style.display = 'none';
+    document.getElementById('subcategoryScreen').style.display = 'none';
+    document.getElementById('videoList').style.display = 'none';
+
+    document.getElementById('linksScreen').style.display = 'block';
+    document.getElementById('pageTitle').textContent = '🔗 Play YouTube Link';
+}
+
+function extractYoutubeId(url) {
+    const match = url.match(
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/
+    );
+
+    return match ? match[1] : null;
+}
+
+document.getElementById('playLinkBtn').addEventListener('click', () => {
+    const url = document.getElementById('youtubeUrl').value.trim();
+
+    const videoId = extractYoutubeId(url);
+
+    if (!videoId) {
+        alert('Invalid YouTube URL');
+        return;
+    }
+
+    currentListItems = [{
+        id: videoId,
+        title: 'Custom YouTube Link'
+    }];
+
+    playVideo(videoId);
+});
+
 document.getElementById('backButton').addEventListener('click', () => {
   if (player && isPlaying) player.pauseVideo();
 
   const list = document.getElementById('videoList');
   const sub = document.getElementById('subcategoryScreen');
   const cat = document.getElementById('categoryScreen');
+  const links = document.getElementById('linksScreen');
 
+  if (links.style.display === 'block') {
+      links.style.display = 'none';
+      cat.style.display = 'grid';
+      document.getElementById('pageTitle').textContent = '🎧 Choose a Category';
+      return;
+  }
+  
   if (list.style.display === 'block') {
     list.style.display = 'none';
     sub.style.display = 'grid';
     document.getElementById('pageTitle').textContent = '📂 Choose a Subcategory';
-  } else if (sub.style.display === 'grid') {
+  }
+  else if (sub.style.display === 'grid') {
     sub.style.display = 'none';
     cat.style.display = 'grid';
     document.getElementById('pageTitle').textContent = '🎧 Choose a Category';
