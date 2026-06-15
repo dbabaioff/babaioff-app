@@ -655,11 +655,30 @@ function showLinksPage() {
 }
 
 function extractYoutubeId(url) {
-    const match = url.match(
-        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/
-    );
+    try {
+        const parsed = new URL(url);
 
-    return match ? match[1] : null;
+        // youtu.be/VIDEO_ID
+        if (parsed.hostname.includes('youtu.be')) {
+            return parsed.pathname.slice(1);
+        }
+
+        // youtube.com/watch?v=VIDEO_ID
+        const watchId = parsed.searchParams.get('v');
+        if (watchId) {
+            return watchId;
+        }
+
+        // youtube.com/live/VIDEO_ID
+        const liveMatch = parsed.pathname.match(/^\/live\/([^/?]+)/);
+        if (liveMatch) {
+            return liveMatch[1];
+        }
+
+        return null;
+    } catch {
+        return null;
+    }
 }
 
 document.getElementById('playLinkBtn').addEventListener('click', () => {
