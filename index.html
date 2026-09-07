@@ -292,7 +292,7 @@
   <div class="category" data-category="music">🎵<br>שירים</div>
   <div class="category" data-category="shiurim">📖<br>שיעורים</div>
   <div class="category" data-category="links">🔗<br>Url</div>
-  <div class="category" data-categpry="games">🎮<br><a href="game.html">משחקים</a></div>
+  <div class="category" data-category="games">🎮<br><a href="game.html">משחקים</a></div>
 </div>
 
 <div class="categories" id="subcategoryScreen" style="display:none;"></div>
@@ -334,93 +334,11 @@
 </div>
 
 <script>
-const videoData = {
-  music: {
-    אבא: [
-      { id: "wOV6YBnjRNE", title: "צמאה (באבוב) || ישיבת מקור חיים" },
-      { id: "lRWgH1CKHmM", title: "להקת אשירה || ועל הכל :: הפעם אודה :: יוסף הצדיק" },
-      { id: "dPR6v_cywuU", title: "להקת אהללה - מחרוזת שירי שבת" },
-      { id: "fVtUmKtEomw", title: "להקת זמרת הארץ - בורא עולם | כי יש ה' | ובכן צדיקים | תרננה שפתי"},
-      { id: "2AWLqffzR9k", title: "לכה דודי - אומנים שונים"},
-      { id: "9oDlNJle_Bs", title: "הראל טל ולהקתו - ברוך הוא | מזמור לתודה | מחשבות טובות"},
-      { id: "_DEatQdfg6s", title: "תרננה שפתי - אודי דוידי"},
-      { id: "GAfCioh7Mp4", title: "תתן אחרית לעמך - הראל טל"},
-      { id: "dEVasMk6Hjs", title: "בואו שעריו בתודה | ישיבת רמת גן ולהקת זמרת הארץ"},
-      { id: "C9Ddlab63PM", title: "חמול על מעשיך - ניגון לימים נוראים | ישיבת רועה ישראל"},
-      { id: "A7d2i3LuD0M", title: "להקת אשירה - מחרוזת מזמור לתודה! 🇮🇱"},
-      { id: "xJ9aLwbGeCs", title: "יצחק מאיר - והביאותים - מתוך סליחות תשעז"},
-      { id: "ryTO71_eMO4", title: "נתן גושן וישי ריבו - נחכה לך"},
-      { id: "QURkPwVwjKs", title: "מחרוזת פורים איחוד הלהקות"},
-      { id: "bltg_9sEqFg", title: "אורי שבח ובניו | עונג שבת"},
-      { id: "1QuNAhONztA", title: "מחרוזת שירי שבת חדשה!! להקת נשמחה"},
-      { id: "C-Tk8scbygI", title: "מחרוזת סוכות איחוד הלהקות"},
-      { id: "VYjIKJppUGc", title: "ממקומך - יונתן רזאל וישיבת אורות שאול"},
-      { id: "DWVNVnFn9nw", title: "קבלת שבת ישיבת נחלת יוסף שבי שומרון"},
-      { id: "TBt-55E6nEs", title: "להקת אשירה מארחת את ישיבת אלון מורה • מחרוזת שירי גאולה!🇮🇱"},
-      { id: "GsBn1d7GC1s", title: "מחרוזת שירי שמחת בית השואבה| להקת שיר חדש"},
-      { id: "98CfUnF52AM", title: "טובה הארץ - להקת ארמונ-יה"},
-      { id: "5YRlr1pzhnY", title: "יצחק מאיר וחיליק פרנק - שמחת בית השואבה"},
-      { id: "NrOx7Rtp8DE", title: "ניגוני הכנה להדלקת נרות חנוכה ושירי שמחה והודאה"},
-      { id: "Cxs2Bs7m5nA", title: "הרב דוד רפאל בן עמי פיינשיל-שיר האמונה"},
-      { id: "gvBGhSB1oKU", title: "סדר טו בשבט בשומרון"},
-      { id: "dsz7J1_mZFE", title: "מחרוזת ניגוני הלל ושמחה | ישיבת רועה ישראל"},
-      { id: "R2hlfGtGyRM", title: "שָׂמַחְתִּי בְּאֹמְרִים לִי - הישיבה הגבוהה מצפה יריחו"},
-      { id: "VLKGccsmBb0", title: "יצחק מאיר, הראל טל, יהונתן ניצן ויענקי ברוין - מחרוזת חנוכה"},
-      { id: "-_2flPQE320", title: "להקת אשירה - משכן || ניגון ברדיצ'ב || טוב להודות"},
-      { id: "6IwfcrdAkYA", title: "שערי שמים פתח - ישיבת נחלת יוסף שבי שומרון"},
-      { id: "x-C3TOvAqLc", title: "יהי שלום בחיליך - רבי שלמה קרליבך"},
-      { id: "aktElnQz6Xs", title: "אם היו בני אדם מרגישים- בנות הרב רזיאל שבח ואחרים"},
-      { id: "eEeNw9zbm4c", title: "אוהב ישראל - הרב אלישע וישליצקי זצל"},
-      { id: "zl8L2LAZnJA", title: "אתה בחרתנו || להקת מזמור שיר"},
-      { id: "_o3_NMI-EcE", title: "בראשית שמות(כד ספרי התנך) תלמוד תורה ברוכין"},
-      { id: "Vd0zH0KGivQ", title: "שירים לבקיאות בתנך"},
-      { id: "S2Yxq1It-zY", title: "מַה נָּאווּ עֲלֵי"},
-      { id: "Yk48pg6xjHY", title: "עָזְרֵנִי אֵל חַי"},
-      { id: "15N484W5mnE", title: "אֵל אֵלִיָּהוּ"},
-      { id: "nC9ouuNnvTA", title: "דרור יקרא לבן עם בת"},
-      { id: "0wS0-_fFytQ", title: "מַה יְּדִידוּת מְנוּחָתֵךְ"},
-      { id: "l7unv5xFt7A", title: "כי אשמרה שבת"},
-      { id: "sHJ3QZZLuQs", title: "יוֹם הַשַּׁבָּת אֵין כָּמוֹהוּ"},
-      { id: "NROE0VgrrW0", title: "שיר של הבבא סאלי קדוש זצוקל - אעופה אשכונה"},
-      { id: "pAcYo9581WI", title: "אשמח בך - יודו לך רעיוני- רבי ישראל אביחצירא - הבבא סאלי"},
-      { id: "InN4iUVZuvM", title: "אשרי מי שגדול בתורה"},
-      { id: "RjPfFTf3Vko", title: "מחרוזת שירי מקדש וגאולה 2 ! - ישיבת הר הבית" },
-      { id: "UaCOkePkXss", title: "להקת מזמור שיר במחרוזת שירי תורה - סיום מסכת ארצי בסוגיה היומית" },
-      { id: "WR-kZWo97Ho", title: "אין דבר רע יורד מן השמים" },
-      { id: "5dptj7zzIig", title: "נחמו נחמו עמי" }
-    ],
-    אליהו: [
-      { id: "BAUagghhHno", title: "עקיבא | יש בך הכל" },
-      { id: "XzeyFpGtCUE", title: "עקיבא | צעדים" },
-      { id: "Y30pfWIQfoo", title: "ישי ריבו - לשוב הביתה" },
-      { id: "T5Wf3gmF6Do", title: "ישי ריבו - סיבת הסיבות" },
-      { id: "gvBGhSB1oKU", title: "סדר טו בשבט בשומרון"},
-      { id: "6IwfcrdAkYA", title: "שערי שמים פתח - ישיבת נחלת יוסף שבי שומרון"},
-      { id: "_o3_NMI-EcE", title: "בראשית שמות(כד ספרי התנך) תלמוד תורה ברוכין"},
-      { id: "Vd0zH0KGivQ", title: "שירים לבקיאות בתנך"},
-      { id: "S2Yxq1It-zY", title: "מַה נָּאווּ עֲלֵי"},
-      { id: "15N484W5mnE", title: "אֵל אֵלִיָּהוּ"},
-      { id: "sHJ3QZZLuQs", title: "יוֹם הַשַּׁבָּת אֵין כָּמוֹהוּ"}
-    ]
-  },
-  shiurim: {
-    "הרב שמואל אליהו": [
-      { id: "9NHPq0KFbns", title: "חיים כהלכה | שאלות ותשובות עם הרב שמואל אליהו | לערב שבת פרשת חיי שרה תשפו" },
-      { id: "sGD_uREse9g", title: "כבוד האישה | הרב שמואל אליהו" },
-      { id: "WDWgR1U_w04", title: "לחזות את העתיד | הרב שמואל אליהו | שיעור במדרשת תכלת" },
-      { id: "IVOfiFcdU_M", title: "מרן הרב שמואל אליהו שליטא | שות מיוחד בעניין כללי הפסיקה" },
-      { id: "Cub3nkmtPQg", title: "חיים כהלכה | שאלות ותשובות עם הרב שמואל אליהו | לערב שבת פרשת וישלח תשפו" },
-      { id: "8a5pi2_BitE", title: "החשיבות הגדולה של היופי והסכנה שבו | שיעור מדרשת תכלת | ד' כסלו תשפו" },
-      { id: "cHE0qWFkZ3A", title: "חיים כהלכה | שאלות ותשובות עם הרב שמואל אליהו | לערב חג השבועות תשפו" }
-    ],
-    שיעורים: [
-      { id: "-2UaM7eCcXI", title: "הרב משה הררי שליטא | חשיבות שימוש חכמים - הלכות חגי תשרי" },
-      { id: "oWzcPIphprI", title: "הרהג דביר זעפרני שליטא | ברכות הראייה" },
-      { id: "4onMRhWlwn8", title: "הרה״ג ישי אחיטוב שליט״א | קבלת הוראות מרן" },
-      { id: "dzxsm4sHuTY", title: "מתי חוגגים פורים בבית שמש, מבשרת, רמות, ועוד ? - הרה״ג יוסף אליהו שליט״א" },
-    ]
-  }
-};
+let videoData = null;
+fetch('videos.json')
+  .then(res => res.json())
+  .then(data => { videoData = data; })
+  .catch(err => console.error('Failed to load videos.json', err));
 
 let currentListItems = [];
 let currentVideoId = null;
@@ -495,7 +413,7 @@ function showNowPlayingBar(video) {
   const title = document.getElementById('npTitle');
 
   thumb.classList.remove('loaded');
-  thumb.src = `https://img.youtube.com/vi/${video.id}/mqdefault.jpg`;
+  thumb.src = thumbUrl(video.id);
   thumb.onload = () => thumb.classList.add('loaded');
   title.textContent = video.title;
   title.dir = autoDir(video.title);
@@ -584,35 +502,80 @@ slider.addEventListener('touchend', () => { isSeeking = false; });
 
 // ── NAVIGATION ────────────────────────────────────────────────
 function autoDir(text) {
-  return /[\u0590-\u05FF]/.test(text) ? "rtl" : "ltr";
+  return /[֐-׿]/.test(text) ? "rtl" : "ltr";
 }
+
+function thumbUrl(id) {
+  return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+}
+
+function renderInto(container, items, buildItem) {
+  container.innerHTML = '';
+  items.forEach(item => container.appendChild(buildItem(item)));
+}
+
+const screens = {
+  category: document.getElementById('categoryScreen'),
+  subcategory: document.getElementById('subcategoryScreen'),
+  videoList: document.getElementById('videoList'),
+  links: document.getElementById('linksScreen'),
+};
+const backButton = document.getElementById('backButton');
+const SCREEN_DISPLAY = { category: 'grid', subcategory: 'grid', videoList: 'block', links: 'block' };
+const SCREEN_TITLE = {
+  category: '🎧 Choose a Category',
+  subcategory: '📂 Choose a Subcategory',
+  videoList: '🎧 Choose a Track',
+  links: '🔗 Play YouTube Link',
+};
+
+function showScreen(name) {
+  for (const key of Object.keys(screens)) {
+    screens[key].style.display = key === name ? SCREEN_DISPLAY[key] : 'none';
+  }
+  document.getElementById('pageTitle').textContent = SCREEN_TITLE[name];
+  backButton.style.display = name === 'category' ? 'none' : '';
+}
+
+// Push a history entry per drill-down so the phone's physical/gesture back
+// button (which triggers popstate in a WebView) steps back one screen
+// instead of exiting the app.
+function navigateTo(name) {
+  history.pushState({ screen: name }, '', location.href);
+  showScreen(name);
+}
+
+window.addEventListener('popstate', e => {
+  if (player && isPlaying) player.pauseVideo();
+  showScreen((e.state && e.state.screen) || 'category');
+});
+
+showScreen('category');
+history.replaceState({ screen: 'category' }, '', location.href);
 
 document.getElementById('categoryScreen').addEventListener('click', e => {
   const cat = e.target.closest('.category');
   if (!cat) return;
 
   if (cat.dataset.category === 'links') {
-      showLinksPage();
+      navigateTo('links');
       return;
   }
-  
+
+  if (!videoData || !videoData[cat.dataset.category]) return;
   showSubcategories(cat.dataset.category);
 });
 
 function showSubcategories(category) {
-  const screen = document.getElementById('subcategoryScreen');
-  screen.innerHTML = '';
-  Object.keys(videoData[category]).forEach(sub => {
+  renderInto(screens.subcategory, Object.keys(videoData[category]), sub => {
     const div = document.createElement('div');
     div.className = 'category';
     div.textContent = sub;
     div.dataset.category = category;
     div.dataset.subcategory = sub;
-    screen.appendChild(div);
+    return div;
   });
-  document.getElementById('categoryScreen').style.display = 'none';
-  screen.style.display = 'grid';
-  document.getElementById('pageTitle').textContent = '📂 Choose a Subcategory';
+  navigateTo('subcategory');
 }
 
 document.getElementById('subcategoryScreen').addEventListener('click', e => {
@@ -622,17 +585,15 @@ document.getElementById('subcategoryScreen').addEventListener('click', e => {
 });
 
 function showVideoList(category, subcategory) {
-  const list = document.getElementById('videoList');
-  list.innerHTML = '';
   currentListItems = videoData[category][subcategory];
 
-  currentListItems.forEach(v => {
+  renderInto(screens.videoList, currentListItems, v => {
     const li = document.createElement('li');
     li.dataset.id = v.id;
     if (v.id === currentVideoId) li.classList.add('active');
 
     const img = document.createElement('img');
-    img.src = `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
+    img.src = thumbUrl(v.id);
     img.alt = v.title;
 
     const span = document.createElement('span');
@@ -641,24 +602,13 @@ function showVideoList(category, subcategory) {
 
     li.appendChild(img);
     li.appendChild(span);
-    list.appendChild(li);
+    return li;
   });
 
-  document.getElementById('subcategoryScreen').style.display = 'none';
-  list.style.display = 'block';
-  document.getElementById('pageTitle').textContent = '🎧 Choose a Track';
+  navigateTo('videoList');
 
   // If something is already playing in this list, scroll to it
   if (currentVideoId) scrollToActiveTrack(currentVideoId);
-}
-
-function showLinksPage() {
-    document.getElementById('categoryScreen').style.display = 'none';
-    document.getElementById('subcategoryScreen').style.display = 'none';
-    document.getElementById('videoList').style.display = 'none';
-
-    document.getElementById('linksScreen').style.display = 'block';
-    document.getElementById('pageTitle').textContent = '🔗 Play YouTube Link';
 }
 
 function extractYoutubeId(url) {
@@ -707,30 +657,7 @@ document.getElementById('playLinkBtn').addEventListener('click', () => {
 });
 
 document.getElementById('backButton').addEventListener('click', () => {
-  if (player && isPlaying) player.pauseVideo();
-
-  const list = document.getElementById('videoList');
-  const sub = document.getElementById('subcategoryScreen');
-  const cat = document.getElementById('categoryScreen');
-  const links = document.getElementById('linksScreen');
-
-  if (links.style.display === 'block') {
-      links.style.display = 'none';
-      cat.style.display = 'grid';
-      document.getElementById('pageTitle').textContent = '🎧 Choose a Category';
-      return;
-  }
-  
-  if (list.style.display === 'block') {
-    list.style.display = 'none';
-    sub.style.display = 'grid';
-    document.getElementById('pageTitle').textContent = '📂 Choose a Subcategory';
-  }
-  else if (sub.style.display === 'grid') {
-    sub.style.display = 'none';
-    cat.style.display = 'grid';
-    document.getElementById('pageTitle').textContent = '🎧 Choose a Category';
-  }
+  history.back();
 });
 
 document.getElementById('videoList').addEventListener('click', e => {

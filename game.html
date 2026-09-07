@@ -172,45 +172,55 @@
   <div class="header-sub">בחרו משחק והתחילו לשחק!</div>
 </header>
 
-<div class="games-grid">
+<div class="games-grid" id="gamesGrid"></div>
 
-  <!-- SNAKE -->
-  <a class="game-card" href="https://www.google.com/fbx?fbx=snake_arcade&fbxga=1&hl=he" target="_blank">
-    <div class="card-header green">
-      <span class="card-emoji">&#128013;</span>
-      <span class="card-title">נחש</span>
-    </div>
-    <div class="card-body">
-      <span class="card-big-emoji">&#128013;</span>
-      <span class="card-cta">&#9654; בואו נשחק!</span>
-    </div>
-  </a>
+<script>
+  const GAMES = [
+    { url: "https://www.google.com/fbx?fbx=snake_arcade&fbxga=1&hl=he", color: "green", title: "נחש", emoji: "🐍" },
+    { url: "https://game.subway-surfers.cc/subway-surfers-games/winter-holiday/winter-holiday.html", color: "blue", title: "רכבות" },
+    { url: "https://myperfecthotel.net/wp-content/uploads/embed/my-perfect-hotel/", color: "yellow", title: "בית מלון" },
+  ];
 
-  <a class="game-card" href="https://game.subway-surfers.cc/subway-surfers-games/winter-holiday/winter-holiday.html" target="_blank">
-    <div class="card-header blue">
-      <!-- <span class="card-emoji">&#128013;</span> -->
-      <span class="card-title">רכבות</span>
-    </div>
-    <div class="card-body">
-      <!-- <span class="card-big-emoji">&#128013;</span> -->
-      <span class="card-cta">&#9654; בואו נשחק!</span>
-    </div>
-  </a>
+  function renderGameCard(game) {
+    const card = document.createElement('a');
+    card.className = 'game-card';
+    card.href = game.url;
+    card.target = '_blank';
 
-  <a class="game-card" href="https://myperfecthotel.net/wp-content/uploads/embed/my-perfect-hotel/" target="_blank">
-    <div class="card-header yellow">
-      <!-- <span class="card-emoji">&#128013;</span> -->
-      <span class="card-title">בית מלון</span>
-    </div>
-    <div class="card-body">
-      <!-- <span class="card-big-emoji">&#128013;</span> -->
-      <span class="card-cta">&#9654; בואו נשחק!</span>
-    </div>
-  </a>
+    const header = document.createElement('div');
+    header.className = `card-header ${game.color}`;
+    if (game.emoji) {
+      const emoji = document.createElement('span');
+      emoji.className = 'card-emoji';
+      emoji.textContent = game.emoji;
+      header.appendChild(emoji);
+    }
+    const title = document.createElement('span');
+    title.className = 'card-title';
+    title.textContent = game.title;
+    header.appendChild(title);
 
- 
+    const body = document.createElement('div');
+    body.className = 'card-body';
+    if (game.emoji) {
+      const bigEmoji = document.createElement('span');
+      bigEmoji.className = 'card-big-emoji';
+      bigEmoji.textContent = game.emoji;
+      body.appendChild(bigEmoji);
+    }
+    const cta = document.createElement('span');
+    cta.className = 'card-cta';
+    cta.textContent = '▶ בואו נשחק!';
+    body.appendChild(cta);
 
-</div>
+    card.appendChild(header);
+    card.appendChild(body);
+    return card;
+  }
+
+  const grid = document.getElementById('gamesGrid');
+  GAMES.forEach(game => grid.appendChild(renderGameCard(game)));
+</script>
 
 </body>
 </html>
